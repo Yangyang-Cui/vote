@@ -26,3 +26,21 @@ $creating->printHeader(['Votes','ID',' Poster Title']);
 $count = $mySQL -> query ( 'SELECT COUNT(v.poster_id) AS votes, p.ID,p.title FROM posters AS p LEFT JOIN votes AS v ON p.id = v.poster_id GROUP BY p.id ORDER BY votes DESC' );
 
 $databases->tableRow($count);
+
+
+?>
+
+<html>
+<head>
+  <link rel='stylesheet' href='css/bootstrap.min.css'>
+</head>
+<body>
+
+<form>
+<input type="button" value="Create a new entry!"
+onclick="window.location.href='http://localhost/my_imdb/create.php'"/>
+</form>
+
+
+</body>
+</html>
