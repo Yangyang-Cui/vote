@@ -22,28 +22,13 @@ if(isset($_POST['submit'])){
         ));
         // check if one new row was created
         if ($statement->rowCount() == 1) {
-            $result = flashMessage("Registration Successful", "Pass");
+            echo "Registration Successful";
         }
     } catch (PDOException $ex) {
-        $result = flashMessage("An error occurred: ". $ex->getMessage());
+        echo "An error occurred: ". $ex->getMessage();
     }
 
-    // check if user exist in the database
-    $sqlQuery = "SELECT * FROM users WHERE email = :email AND firstname = :firstname AND lastname = :lastname";
-    $statement = $db->prepare($sqlQuery);
-    $statement->execute(array(':username' => $user, ':firstname' => $firstname, ':lastname' => $lastname));
 
-    while($row = $statement->fetch()){
-        $dataEmail = $row['email'];
-        $dataFirstname = $row['firstname'];
-        $dataLastname = $row['lastname'];
-
-        if(){
-
-        } else {
-            $result = flashMessage("Invalid username or password");
-        }
-    }
 }
 ?>
 
