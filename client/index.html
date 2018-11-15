@@ -15,45 +15,51 @@
 		</style>
 	</head>
 	<body>
-		<h1>Register</h1>
-		<form id="checkin">
-			<div class="form-group">
-				<label for="exampleInputEmail1">Email address</label>
-				<input id="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-			</div>
-			<div class="form-group">
-				<label for="exampleInputPassword1">First name</label>
-				<input id="firstname" type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
-			</div>
-			<div class="form-group">
-				<label for="exampleInputPassword1">Last name</label>
-				<input id="lastname" type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
-			</div>
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
-		<input id="text" type="text" value="https://hogangnono.com" style="width:80%" /><br />
-		<div id="qrcode"></div>
-		<!-- Optional JavaScript -->
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+		<div class="container">
+			<h1>Register</h1>
+			<form id="checkin">
+				<div class="form-group">
+					<label for="exampleInputEmail1">Email address</label>
+					<input id="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">First name</label>
+					<input id="firstname" type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">Last name</label>
+					<input id="lastname" type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+			<div id="qrcode" style="display:none"></div>
+		</div>
+		<script src="js/jquery-3.3.1.min.js"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-		<script src="qrcode.min.js"></script>
+		<script src="js/qrcode.min.js"></script>
 		<script>
-		var qrcode=new QRCode("qrcode");
-		function makeCode(){
-			if($('#firstname').val().length==0 || $('#lastname').val().length==0 || $('#email').val().length==0){
-				return;
-			}
-			data={f:$('#firstname').val(),l:$('#lastname').val(),e:$('#email').val()}
-			qrcode.makeCode(JSON.stringify(data));
-			$('#text').val(JSON.stringify(data));
+		var tCheckServer;
+		
+		function checkServer(){
+			$.getJSON('http://localhost/vote/server/signin.php?email='+$('#email').val(),function(data){
+				console.log(data);
+			});
 		}
 
-		makeCode();
+		var qrcode=new QRCode("qrcode");
 		$('#checkin').on('submit',function(e){
 			e.preventDefault();
-			makeCode();
+			if($('#firstname').val().length==0 || $('#lastname').val().length==0 || $('#email').val().length==0) return;
+			$(this).hide();
+			data={f:$('#firstname').val(),l:$('#lastname').val(),e:$('#email').val()}
+			qrcode.makeCode(JSON.stringify(data));
+			$('#qrcode').show();
+			console.log(JSON.stringify(data));
+			tCheckServer=setInterval(function(){
+			$.getJSON('http://localhost/vote/server/signin.php?email='+$('#email').val(),function(data){
+				console.log(data);
+			});
+		},1000);
 		});
 	</script>
 	</body>

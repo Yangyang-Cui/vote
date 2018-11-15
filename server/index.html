@@ -1,43 +1,58 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Scanner</title>
-  </head>
-  <body>
-    <video id="preview" style="width:100%;height:100vh"></video>
-	<h1 id="welcome"></h1>
-    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="js/instascan.min.js"></script>
-    <script type="text/javascript">
-      let scanner = new Instascan.Scanner({video: document.getElementById('preview')});
-      scanner.addListener('scan', function (content){
-        console.log(content);
-		content=JSON.parse(content);
-		if(content.fname==undefined || content.lname==undefined || content.uemail==undefined || content.fname.length==0 || content.lname.length==0 || content.uemail.length==0) return;
-		//$('#preview').hide();
-		$('#welcome').text(content.fname);
-		$('#welcome').show();
-		$.ajax({
-		  type: "POST",
-		  url: 'checkin.php',
-		  data: content,
-		  success: function(data){
-			console.log(data);
-			$('#preview').show();
-		  }
-		});
-      });
-      Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-          scanner.start(cameras[0]);
-        } else {
-          console.error('No cameras found.');
-        }
-      }).catch(function (e) {
-        console.error(e);
-      });
-	  
-	  
-    </script>
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+		<title>Hello, world!</title>
+		<style>
+			#qrcode{
+				width:160px;
+				height:160px;
+				margin-top:15px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1 id="welcome" style="display:none"></h1>
+			<div id="scanner">
+				<h1>Place your the QR code in front of the camera</h1>
+				<video id="preview" style="width:100%"></video>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="js/instascan.min.js"></script>
+		<script type="text/javascript">
+			let scanner = new Instascan.Scanner({video: document.getElementById('preview')});
+			scanner.addListener('scan',function(content){
+				console.log(content);
+				content=JSON.parse(content);
+				if(content.f==undefined || content.l==undefined || content.e==undefined || content.f.length==0 || content.l.length==0 || content.e.length==0) return;
+				$('#scanner').hide();
+				$('#welcome').text('Welcome, '+content.f+', you are checked in!');
+				$('#welcome').show();
+				setTimeout(function(){
+					$('#scanner').show();
+					$('#welcome').hide();
+				}, 3000);
+				$.ajax({
+					type:'POST',
+					url:'checkin.php',
+					data:content,
+					success:function(data){
+						console.log(data);
+					}
+				});
+			});
+			Instascan.Camera.getCameras().then(function(cameras){
+				if(cameras.length>0) scanner.start(cameras[0]);
+				else console.error('No cameras found.');
+			}).catch(function(e){
+				console.error(e);
+			});
+		</script>
   </body>
 </html>
