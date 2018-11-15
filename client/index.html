@@ -16,21 +16,20 @@
 	</head>
 	<body>
 		<h1>Register</h1>
-		<form>
-		<div class="form-group">
-		<label for="exampleInputEmail1">Email address</label>
-		<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-		<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-		</div>
-		<div class="form-group">
-		<label for="exampleInputPassword1">Password</label>
-		<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-		</div>
-		<div class="form-group form-check">
-		<input type="checkbox" class="form-check-input" id="exampleCheck1">
-		<label class="form-check-label" for="exampleCheck1">Check me out</label>
-		</div>
-		<button type="submit" class="btn btn-primary">Submit</button>
+		<form id="checkin">
+			<div class="form-group">
+				<label for="exampleInputEmail1">Email address</label>
+				<input id="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+			</div>
+			<div class="form-group">
+				<label for="exampleInputPassword1">First name</label>
+				<input id="firstname" type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
+			</div>
+			<div class="form-group">
+				<label for="exampleInputPassword1">Last name</label>
+				<input id="lastname" type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
 		</form>
 		<input id="text" type="text" value="https://hogangnono.com" style="width:80%" /><br />
 		<div id="qrcode"></div>
@@ -42,25 +41,19 @@
 		<script src="qrcode.min.js"></script>
 		<script>
 		var qrcode=new QRCode("qrcode");
-		function makeCode(){		
-			var elText = document.getElementById("text");
-			
-			if (!elText.value) {
-				alert("Input a text");
-				elText.focus();
+		function makeCode(){
+			if($('#firstname').val().length==0 || $('#lastname').val().length==0 || $('#email').val().length==0){
 				return;
 			}
-			
-			qrcode.makeCode(elText.value);
+			data={f:$('#firstname').val(),l:$('#lastname').val(),e:$('#email').val()}
+			qrcode.makeCode(JSON.stringify(data));
+			$('#text').val(JSON.stringify(data));
 		}
 
 		makeCode();
-		$("#text").on("blur", function () {
-				makeCode();
-			}).on("keydown", function (e) {
-			if (e.keyCode == 13) {
-				makeCode();
-			}
+		$('#checkin').on('submit',function(e){
+			e.preventDefault();
+			makeCode();
 		});
 	</script>
 	</body>
